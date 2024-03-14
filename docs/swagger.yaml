@@ -1,0 +1,153 @@
+definitions:
+  dto.UserDTO:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      isActive:
+        type: boolean
+      lastUpdate:
+        type: string
+      userId:
+        type: string
+      verificationCode:
+        type: string
+    type: object
+  model.UserCreateModel:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - fullName
+    - password
+    type: object
+  mongo_model.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      lastUpdate:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided information
+      parameters:
+      - description: Create User Model
+        in: body
+        name: userCreateModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreateModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User successfully created
+          schema:
+            $ref: '#/definitions/dto.UserDTO'
+        "400":
+          description: Invalid user data
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: object
+      summary: Create a new user
+      tags:
+      - user
+  /users/activate/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Activates a user account with the given email
+      parameters:
+      - description: User Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+      summary: Activate user
+      tags:
+      - user
+  /users/bulk/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/mongo_model.User'
+        "400":
+          description: Invalid ID format
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - user
+swagger: "2.0"

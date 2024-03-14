@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"hu-design-project/application/handler"
+	_ "hu-design-project/docs"
 	"hu-design-project/infrastructure/configuration"
+	"hu-design-project/infrastructure/controller"
 	"hu-design-project/infrastructure/repository"
 	"log"
-	"net/http"
+	"path/filepath"
 )
 
 func main() {
@@ -16,17 +19,22 @@ func main() {
 		log.Fatalf("Error reading config: %v", err)
 	}
 
-	repo := repository.NewUserRepository()
-	err = repo.ConnectToMongo(config.URL)
+	userRepo, err := repository.NewUserRepository(config.URL, config.Database, config.Collection)
 	if err != nil {
-		fmt.Printf("Failed to connect MongoDB with url: %s", config.URL)
+		log.Fatalf("Failed to connect MongoDB with url: %s, error: %v", config.URL, err)
 	}
+	abs, err := filepath.Abs("./")
 
+	// Printing if there is no error
+	if err == nil {
+		fmt.Println("Absolute path is:", abs)
+	}
+	// Init Song Handler
+	songHandler := handler.InitializeUserHandler(userRepo)
+
+	// Create Controller
+	userController := controller.NewUserController(songHandler)
 	e := echo.New()
-
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Merhaba, Echo ile API'ye hoş geldiniz!")
-	})
-
+	userController.Register(e)
 	e.Logger.Fatal(e.Start(":8080"))
 }
