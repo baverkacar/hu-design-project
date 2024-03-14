@@ -6,20 +6,21 @@ import (
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"hu-design-project/application/handler"
+	"hu-design-project/application/handler/user"
 	"hu-design-project/application/model"
 	"net/http"
 	"net/url"
 )
 
 type UserController struct {
-	userHandler *handler.UserHandler
+	userHandler *user.Handler
 	validate    *validator.Validate
 }
 
-func NewUserController(userHandler *handler.UserHandler) *UserController {
+func NewUserController(userHandler *user.Handler) *UserController {
 	return &UserController{
 		userHandler: userHandler,
+		// TODO: buraya validator ekleyeceksin!
 	}
 }
 

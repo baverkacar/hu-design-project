@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"hu-design-project/application/model/mongo_model"
 )
 
-type UserHandler struct {
+type Handler struct {
 	CreateUser   CreateUserHandler
 	GetUser      GetUserByIdHandler
 	ActivateUser ActivateUserHandler

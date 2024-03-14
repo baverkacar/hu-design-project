@@ -1,15 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"github.com/labstack/echo/v4"
-	"hu-design-project/application/handler"
+	"hu-design-project/application/handler/auth"
+	"hu-design-project/application/handler/user"
 	_ "hu-design-project/docs"
 	"hu-design-project/infrastructure/configuration"
 	"hu-design-project/infrastructure/controller"
 	"hu-design-project/infrastructure/repository"
 	"log"
-	"path/filepath"
 )
 
 func main() {
@@ -23,18 +22,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect MongoDB with url: %s, error: %v", config.URL, err)
 	}
-	abs, err := filepath.Abs("./")
 
-	// Printing if there is no error
-	if err == nil {
-		fmt.Println("Absolute path is:", abs)
-	}
-	// Init Song Handler
-	songHandler := handler.InitializeUserHandler(userRepo)
+	// Init Handlers
+	userHandler := user.InitializeUserHandler(userRepo)
+	authHandler := auth.InitializeAuthHandler(userRepo)
 
-	// Create Controller
-	userController := controller.NewUserController(songHandler)
+	// Create Controllers
+	userController := controller.NewUserController(userHandler)
+	authController := controller.NewAuthController(authHandler)
+
 	e := echo.New()
 	userController.Register(e)
+	authController.Register(e)
 	e.Logger.Fatal(e.Start(":8080"))
 }

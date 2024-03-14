@@ -30,6 +30,17 @@ definitions:
     - fullName
     - password
     type: object
+  model.UserLoginModel:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
   mongo_model.User:
     properties:
       createdAt:
@@ -50,6 +61,36 @@ definitions:
 info:
   contact: {}
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Log in with email and password
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: loginModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLoginModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged in
+          schema:
+            $ref: '#/definitions/mongo_model.User'
+        "400":
+          description: Invalid request format or Validation error
+          schema:
+            type: string
+        "401":
+          description: Invalid email or password
+          schema:
+            type: string
+      summary: Login a user
+      tags:
+      - auth
   /users:
     post:
       consumes:

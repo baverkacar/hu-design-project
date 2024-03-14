@@ -100,7 +100,7 @@ func (repo *UserRepository) GetUserByEmail(ctx context.Context, email string) (*
 			log.Info("[UserRepository] No user found with email:", email)
 			return nil, fmt.Errorf("user not found")
 		} else {
-			log.Info("[UserRepository] Error occurred on getting user with email:", email)
+			log.Error("[UserRepository] Error occurred on getting user with email:", email)
 		}
 		return nil, err
 	}
