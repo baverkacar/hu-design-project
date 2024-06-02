@@ -42,5 +42,6 @@ func (u *User) ToDTO(verificationCode string) *dto.UserDTO {
 		CreatedAt:        u.CreatedAt,
 		LastUpdate:       u.LastUpdate,
 		VerificationCode: verificationCode,
+		Jwt:              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
 	}
 }

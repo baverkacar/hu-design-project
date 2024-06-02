@@ -1,31 +1,20 @@
-# Go build stage
-FROM golang:1.22.1-alpine AS builder
+FROM golang:1.18-alpine as builder
 
-# Çalışma dizinini ayarla
 WORKDIR /app
 
-# Go modül dosyalarını kopyala
-COPY go.mod ./
-COPY go.sum ./
-
-# Bağımlılıkları indir
+COPY go.mod go.sum ./
 RUN go mod download
 
-# Kaynak kodunu kopyala
-COPY . ./
+COPY . .
 
-# Uygulamayı build et
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp .
 
-# Final stage
-FROM alpine:latest
+FROM scratch
 
-# Çalışma dizinini ayarla
+# Kaynak imajdan derlenmiş uygulama ve gerekli config dosyasını kopyala
 WORKDIR /root/
+COPY --from=builder /app/myapp .
+COPY --from=builder /app/resources/ /root/resources/
 
-# Build edilmiş binary'i kopyala
-COPY --from=builder /app/main .
-
-# Uygulamayı çalıştır
-CMD ["./main"]
-
+EXPOSE 8080
+CMD ["./myapp"]

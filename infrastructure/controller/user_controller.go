@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	_ "github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,13 +14,11 @@ import (
 
 type UserController struct {
 	userHandler *user.Handler
-	validate    *validator.Validate
 }
 
 func NewUserController(userHandler *user.Handler) *UserController {
 	return &UserController{
 		userHandler: userHandler,
-		// TODO: buraya validator ekleyeceksin!
 	}
 }
 
@@ -50,10 +48,6 @@ func (controller *UserController) CreateUser(c echo.Context) error {
 	if err := c.Bind(userCreateModel); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid user data")
 	}
-
-	/*if err := controller.validateUser(userCreateModel); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}*/
 
 	response, err := controller.userHandler.CreateUser.Handle(ctx, userCreateModel)
 	if err != nil {
@@ -121,14 +115,4 @@ func (controller *UserController) ActivateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "User successfully activated"})
-}
-
-func (controller *UserController) validateUser(user *model.UserCreateModel) error {
-	log.Info("[UserController] validating user")
-	if err := controller.validate.Struct(user); err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Field()+" is required.")
-		}
-	}
-	return nil
 }

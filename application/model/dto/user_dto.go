@@ -10,4 +10,5 @@ type UserDTO struct {
 	VerificationCode string    `bson:"verificationCode" json:"verificationCode,omitempty"`
 	CreatedAt        time.Time `bson:"createdAt" json:"createdAt"`
 	LastUpdate       time.Time `bson:"lastUpdate" json:"lastUpdate"`
+	Jwt              string    `bson:"jwt" json:"jwt"`
 }

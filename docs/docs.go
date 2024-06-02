@@ -15,6 +15,86 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/alerts": {
+            "get": {
+                "description": "Get all alerts from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Retrieve all alerts",
+                "responses": {
+                    "200": {
+                        "description": "List of all alerts",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/mongo_model.Alert"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/{id}": {
+            "post": {
+                "description": "Adds the IP address of an alert with the given ID to the whitelist or blacklist based on the 'add' query parameter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Add or remove an alert's IP to/from whitelist or blacklist",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Action to perform ('whitelist' or 'blacklist')",
+                        "name": "add",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "IP successfully added to list",
+                        "schema": {
+                            "$ref": "#/definitions/mongo_model.List"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid alert ID or operation"
+                    },
+                    "404": {
+                        "description": "Alert not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Log in with email and password",
@@ -54,6 +134,173 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Invalid email or password",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/blacklist/{id}": {
+            "get": {
+                "description": "Get a blacklist entry by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blacklist"
+                ],
+                "summary": "Retrieve a blacklist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Blacklist Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved blacklist entry",
+                        "schema": {
+                            "$ref": "#/definitions/mongo_model.List"
+                        }
+                    },
+                    "404": {
+                        "description": "Blacklist entry not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a blacklist entry by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blacklist"
+                ],
+                "summary": "Remove a blacklist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Blacklist Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted blacklist entry",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Blacklist entry not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/dashboard": {
+            "get": {
+                "description": "Retrieves combined data of alerts, blacklists, devices, requests, and whitelists for the dashboard.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dashboard"
+                ],
+                "summary": "Retrieve dashboard data",
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of dashboard data",
+                        "schema": {
+                            "$ref": "#/definitions/mongo_model.DashboardData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/devices": {
+            "get": {
+                "description": "Get all devices from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices"
+                ],
+                "summary": "Retrieve all devices",
+                "responses": {
+                    "200": {
+                        "description": "List of all devices",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/mongo_model.Device"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/requests": {
+            "get": {
+                "description": "Get all requests from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "requests"
+                ],
+                "summary": "Retrieve all requests",
+                "responses": {
+                    "200": {
+                        "description": "List of all requests",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/mongo_model.Request"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "string"
                         }
@@ -212,6 +459,80 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/whitelist/{id}": {
+            "get": {
+                "description": "Get a whitelist entry by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "whitelist"
+                ],
+                "summary": "Retrieve a whitelist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Whitelist Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved whitelist entry",
+                        "schema": {
+                            "$ref": "#/definitions/mongo_model.List"
+                        }
+                    },
+                    "404": {
+                        "description": "Whitelist entry not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a whitelist entry by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "whitelist"
+                ],
+                "summary": "Remove a whitelist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Whitelist Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted whitelist entry",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Whitelist entry not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -274,6 +595,112 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
+                }
+            }
+        },
+        "mongo_model.Alert": {
+            "type": "object",
+            "properties": {
+                "alertRisk": {
+                    "type": "string"
+                },
+                "alertType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ipaddress": {
+                    "type": "string"
+                },
+                "lastUpdate": {
+                    "type": "string"
+                }
+            }
+        },
+        "mongo_model.DashboardData": {
+            "type": "object",
+            "properties": {
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mongo_model.Alert"
+                    }
+                },
+                "blacklists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mongo_model.List"
+                    }
+                },
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mongo_model.Device"
+                    }
+                },
+                "requests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mongo_model.Request"
+                    }
+                },
+                "whitelists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mongo_model.List"
+                    }
+                }
+            }
+        },
+        "mongo_model.Device": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "ipaddress": {
+                    "type": "string"
+                },
+                "osname": {
+                    "type": "string"
+                }
+            }
+        },
+        "mongo_model.List": {
+            "type": "object",
+            "properties": {
+                "alertID": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ipaddress": {
+                    "type": "string"
+                }
+            }
+        },
+        "mongo_model.Request": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "requestType": {
+                    "type": "string"
                 }
             }
         },

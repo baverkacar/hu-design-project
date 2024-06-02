@@ -34,7 +34,7 @@ func (h *LoginHandler) Handle(ctx context.Context, requestBody model.UserLoginMo
 	}
 
 	if !user.IsActive {
-		return nil, errors.New("account is not activated. Please activate your account.")
+		return nil, errors.New("account is not activated. Please activate your account")
 	}
 
 	return user, nil

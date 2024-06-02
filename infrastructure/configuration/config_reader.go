@@ -1,31 +1,27 @@
 package configuration
 
-import (
-	"gopkg.in/yaml.v2"
-	"os"
-)
-
-const (
-	ConfigPath = "./resources/mongo-config.yml"
-)
-
+// MongoConfig veritabanı yapılandırmalarını saklamak için bir struct.
 type MongoConfig struct {
-	URL        string `yaml:"url"`
-	Database   string `yaml:"database"`
-	Collection string `yaml:"collection"`
+	URL                 string
+	Database            string
+	UserCollection      string
+	DevicesCollection   string
+	RequestsCollection  string
+	AlertsCollection    string
+	BlacklistCollection string
+	WhitelistCollection string
 }
 
-func ReadMongoConfig() (*MongoConfig, error) {
-	data, err := os.ReadFile(ConfigPath)
-	if err != nil {
-		return nil, err
+// NewMongoConfig, yeni bir MongoConfig nesnesi oluşturur ve döndürür.
+func NewMongoConfig() *MongoConfig {
+	return &MongoConfig{
+		URL:                 "mongodb://mongodb:27017",
+		Database:            "hu-design-project",
+		UserCollection:      "user",
+		DevicesCollection:   "devices",
+		RequestsCollection:  "requests",
+		AlertsCollection:    "alerts",
+		BlacklistCollection: "blacklist",
+		WhitelistCollection: "whitelist",
 	}
-
-	var config MongoConfig
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &config, nil
 }

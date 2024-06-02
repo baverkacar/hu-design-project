@@ -41,6 +41,75 @@ definitions:
     - email
     - password
     type: object
+  mongo_model.Alert:
+    properties:
+      alertRisk:
+        type: string
+      alertType:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      ipaddress:
+        type: string
+      lastUpdate:
+        type: string
+    type: object
+  mongo_model.DashboardData:
+    properties:
+      alerts:
+        items:
+          $ref: '#/definitions/mongo_model.Alert'
+        type: array
+      blacklists:
+        items:
+          $ref: '#/definitions/mongo_model.List'
+        type: array
+      devices:
+        items:
+          $ref: '#/definitions/mongo_model.Device'
+        type: array
+      requests:
+        items:
+          $ref: '#/definitions/mongo_model.Request'
+        type: array
+      whitelists:
+        items:
+          $ref: '#/definitions/mongo_model.List'
+        type: array
+    type: object
+  mongo_model.Device:
+    properties:
+      id:
+        type: string
+      ipaddress:
+        type: string
+      osname:
+        type: string
+    type: object
+  mongo_model.List:
+    properties:
+      alertID:
+        type: string
+      date:
+        type: string
+      id:
+        type: string
+      ipaddress:
+        type: string
+    type: object
+  mongo_model.Request:
+    properties:
+      createdAt:
+        type: string
+      details:
+        type: string
+      id:
+        type: string
+      requestType:
+        type: string
+    type: object
   mongo_model.User:
     properties:
       createdAt:
@@ -61,6 +130,60 @@ definitions:
 info:
   contact: {}
 paths:
+  /alerts:
+    get:
+      consumes:
+      - application/json
+      description: Get all alerts from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all alerts
+          schema:
+            items:
+              $ref: '#/definitions/mongo_model.Alert'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all alerts
+      tags:
+      - alerts
+  /alerts/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Adds the IP address of an alert with the given ID to the whitelist
+        or blacklist based on the 'add' query parameter
+      parameters:
+      - description: Alert ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Action to perform ('whitelist' or 'blacklist')
+        in: query
+        name: add
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: IP successfully added to list
+          schema:
+            $ref: '#/definitions/mongo_model.List'
+        "400":
+          description: Invalid alert ID or operation
+        "404":
+          description: Alert not found
+        "500":
+          description: Internal Server Error
+      summary: Add or remove an alert's IP to/from whitelist or blacklist
+      tags:
+      - alerts
   /auth/login:
     post:
       consumes:
@@ -91,6 +214,117 @@ paths:
       summary: Login a user
       tags:
       - auth
+  /blacklist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a blacklist entry by ID
+      parameters:
+      - description: Blacklist Entry ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted blacklist entry
+          schema:
+            type: string
+        "404":
+          description: Blacklist entry not found
+        "500":
+          description: Internal Server Error
+      summary: Remove a blacklist entry
+      tags:
+      - blacklist
+    get:
+      consumes:
+      - application/json
+      description: Get a blacklist entry by ID
+      parameters:
+      - description: Blacklist Entry ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved blacklist entry
+          schema:
+            $ref: '#/definitions/mongo_model.List'
+        "404":
+          description: Blacklist entry not found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve a blacklist entry
+      tags:
+      - blacklist
+  /dashboard:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves combined data of alerts, blacklists, devices, requests,
+        and whitelists for the dashboard.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful retrieval of dashboard data
+          schema:
+            $ref: '#/definitions/mongo_model.DashboardData'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve dashboard data
+      tags:
+      - dashboard
+  /devices:
+    get:
+      consumes:
+      - application/json
+      description: Get all devices from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all devices
+          schema:
+            items:
+              $ref: '#/definitions/mongo_model.Device'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all devices
+      tags:
+      - devices
+  /requests:
+    get:
+      consumes:
+      - application/json
+      description: Get all requests from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all requests
+          schema:
+            items:
+              $ref: '#/definitions/mongo_model.Request'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all requests
+      tags:
+      - requests
   /users:
     post:
       consumes:
@@ -191,4 +425,53 @@ paths:
       summary: Get user by ID
       tags:
       - user
+  /whitelist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a whitelist entry by ID
+      parameters:
+      - description: Whitelist Entry ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted whitelist entry
+          schema:
+            type: string
+        "404":
+          description: Whitelist entry not found
+        "500":
+          description: Internal Server Error
+      summary: Remove a whitelist entry
+      tags:
+      - whitelist
+    get:
+      consumes:
+      - application/json
+      description: Get a whitelist entry by ID
+      parameters:
+      - description: Whitelist Entry ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved whitelist entry
+          schema:
+            $ref: '#/definitions/mongo_model.List'
+        "404":
+          description: Whitelist entry not found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve a whitelist entry
+      tags:
+      - whitelist
 swagger: "2.0"
