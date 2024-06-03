@@ -15,7 +15,7 @@ type MongoConfig struct {
 // NewMongoConfig, yeni bir MongoConfig nesnesi oluşturur ve döndürür.
 func NewMongoConfig() *MongoConfig {
 	return &MongoConfig{
-		URL:                 "mongodb://localhost:27017",
+		URL:                 "mongodb://mongodb:27017",
 		Database:            "hu-design-project",
 		UserCollection:      "user",
 		DevicesCollection:   "devices",
