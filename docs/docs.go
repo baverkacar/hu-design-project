@@ -460,6 +460,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/changepassword": {
+            "patch": {
+                "description": "Change the password of a user by verifying the old password and setting a new one",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Change user password",
+                "parameters": [
+                    {
+                        "description": "Change Password Information",
+                        "name": "changePassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ChangePasswordModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Password successfully changed"
+                    },
+                    "400": {
+                        "description": "Invalid input provided",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/forgetpassword": {
+            "post": {
+                "description": "Sends a password reset email to the user if the email exists in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Send password reset email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset email sent successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Email is required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/whitelist/{id}": {
             "get": {
                 "description": "Get a whitelist entry by ID",
@@ -551,6 +638,9 @@ const docTemplate = `{
                 "isActive": {
                     "type": "boolean"
                 },
+                "jwt": {
+                    "type": "string"
+                },
                 "lastUpdate": {
                     "type": "string"
                 },
@@ -558,6 +648,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "verificationCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ChangePasswordModel": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "newPassword": {
+                    "type": "string"
+                },
+                "oldPassword": {
                     "type": "string"
                 }
             }
@@ -721,6 +825,9 @@ const docTemplate = `{
                 },
                 "isActive": {
                     "type": "boolean"
+                },
+                "jwt": {
+                    "type": "string"
                 },
                 "lastUpdate": {
                     "type": "string"

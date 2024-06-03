@@ -27,6 +27,8 @@ func (controller *UserController) Register(e *echo.Echo) {
 	e.POST("/users", controller.CreateUser)
 	e.GET("/users/bulk/:id", controller.GetUserBulk)
 	e.POST("/users/activate/:email", controller.ActivateUser)
+	e.PATCH("/users/changepassword", controller.ChangePassword)
+	e.POST("/users/forgetpassword", controller.ForgetPassword)
 }
 
 // CreateUser godoc
@@ -115,4 +117,55 @@ func (controller *UserController) ActivateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "User successfully activated"})
+}
+
+// ChangePassword godoc
+// @Summary Change user password
+// @Description Change the password of a user by verifying the old password and setting a new one
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param changePassword body model.ChangePasswordModel true "Change Password Information"
+// @Success 204 "Password successfully changed"
+// @Failure 400 {object} object "Invalid input provided"
+// @Failure 500 {object} object "Internal server error"
+// @Router /users/changepassword [patch]
+func (controller *UserController) ChangePassword(c echo.Context) error {
+	var changePassword model.ChangePasswordModel
+	if err := c.Bind(&changePassword); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid input")
+	}
+
+	// Kullanıcının eski şifresini doğrulama ve yeni şifre ile güncelleme işlemi
+	if err := controller.userHandler.ChangePassword.Handle(c.Request().Context(), changePassword); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// ForgetPassword godoc
+// @Summary Send password reset email
+// @Description Sends a password reset email to the user if the email exists in the system
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param email query string true "User Email"
+// @Success 200 {string} string "Password reset email sent successfully"
+// @Failure 400 {string} string "Email is required"
+// @Failure 500 {string} string "Internal server error"
+// @Router /users/forgetpassword [post]
+func (controller *UserController) ForgetPassword(c echo.Context) error {
+	email := c.QueryParam("email")
+	if email == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Email is required")
+	}
+
+	// E-posta adresine göre kullanıcıyı bulma ve şifre sıfırlama işlemi
+	err := controller.userHandler.ResetPassword.Handle(c.Request().Context(), email)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, "Password reset email sent successfully")
 }

@@ -8,9 +8,11 @@ import (
 )
 
 type Handler struct {
-	CreateUser   CreateUserHandler
-	GetUser      GetUserByIdHandler
-	ActivateUser ActivateUserHandler
+	CreateUser     CreateUserHandler
+	GetUser        GetUserByIdHandler
+	ActivateUser   ActivateUserHandler
+	ChangePassword ChangePasswordHandler
+	ResetPassword  ResetPasswordHandler
 }
 type CreateUserHandler interface {
 	Handle(context context.Context, song *model.UserCreateModel) (*dto.UserDTO, error)
@@ -21,5 +23,13 @@ type GetUserByIdHandler interface {
 }
 
 type ActivateUserHandler interface {
+	Handle(ctx context.Context, email string) error
+}
+
+type ChangePasswordHandler interface {
+	Handle(ctx context.Context, passwordModel model.ChangePasswordModel) error
+}
+
+type ResetPasswordHandler interface {
 	Handle(ctx context.Context, email string) error
 }

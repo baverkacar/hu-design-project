@@ -40,6 +40,36 @@ func NewUserRepository(mongoURL, database, collection string) (*UserRepository, 
 	}, nil
 }
 
+func (r *UserRepository) ChangePassword(ctx context.Context, userID string, oldPassword, newPassword string) error {
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": userObjID, "password": oldPassword}
+	update := bson.M{"$set": bson.M{"password": newPassword, "lastUpdate": time.Now()}}
+
+	result, err := r.client.Database(r.database).Collection(r.collection).UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
+	if result.ModifiedCount == 0 {
+		return errors.New("no user found with the given ID and password")
+	}
+
+	return nil
+}
+
+func (r *UserRepository) UpdatePasswordByEmail(ctx context.Context, email, newPassword string) error {
+	coll := r.client.Database(r.database).Collection(r.collection)
+	filter := bson.M{"email": email}
+	update := bson.M{"$set": bson.M{"password": newPassword, "lastUpdate": time.Now()}}
+
+	_, err := coll.UpdateOne(ctx, filter, update)
+	return err
+}
+
 func (repo *UserRepository) CheckEmail(ctx context.Context, email string) (bool, error) {
 	collection := repo.client.Database(repo.database).Collection(repo.collection)
 	var result interface{}

@@ -11,14 +11,4 @@ Alerts:
 - POST /whitelist ve POST /blacklist lazım
 - GET /whitelist ve GET /blacklist lazım
 
-
-{
-"userId": "baverkacar@gmail.com",
-"oldPassword": "",
-"newPassword": ""
-}
-
-/users/change-password
-
-
 /forget-password

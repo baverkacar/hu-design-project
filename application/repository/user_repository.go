@@ -11,4 +11,6 @@ type UserRepository interface {
 	GetUserById(ctx context.Context, id string) (*mongo_model.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*mongo_model.User, error)
 	ActivateUser(ctx context.Context, user *mongo_model.User) error
+	UpdatePasswordByEmail(ctx context.Context, email, newPassword string) error
+	ChangePassword(ctx context.Context, userID string, oldPassword, newPassword string) error
 }

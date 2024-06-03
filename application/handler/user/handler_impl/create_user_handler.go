@@ -40,7 +40,7 @@ func (handler *CreateUserHandler) Handle(ctx context.Context, userCreateModel *m
 		return nil, err
 	}
 
-	code, err := util.SendMail(user.Email)
+	code, err := util.SendMail(user.Email, "")
 	if err != nil {
 		log.Info("[CreateUserHandler] error occurred on sending email")
 		return nil, err

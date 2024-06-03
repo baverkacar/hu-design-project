@@ -6,8 +6,11 @@ import (
 )
 
 type Request struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	RequestType string             `bson:"requestType"`
-	Details     string             `bson:"details"`
-	CreatedAt   time.Time          `bson:"createdAt"`
+	ID         primitive.ObjectID `bson:"_id,omitempty"`
+	SourceIP   string             `bson:"sourceIp"`
+	DestIP     string             `bson:"destIp"`
+	Protocol   string             `bson:"protocol"`
+	Time       string             `bson:"time"`
+	Date       time.Time          `bson:"date"`
+	Permission string             `bson:"permission"`
 }

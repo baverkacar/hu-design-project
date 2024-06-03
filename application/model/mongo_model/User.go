@@ -2,7 +2,6 @@ package mongo_model
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 	"hu-design-project/application/model"
 	"hu-design-project/application/model/dto"
 	"time"
@@ -16,17 +15,14 @@ type User struct {
 	IsActive   bool               `bson:"isActive" json:"isActive"`
 	CreatedAt  time.Time          `bson:"createdAt" json:"createdAt"`
 	LastUpdate time.Time          `bson:"lastUpdate" json:"lastUpdate"`
+	Jwt        string             `bson:"jwt" json:"jwt"`
 }
 
 func NewUser(userCreateModel model.UserCreateModel) *User {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userCreateModel.Password), bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
 	return &User{
 		FullName:   userCreateModel.FullName,
 		Email:      userCreateModel.Email,
-		Password:   string(hashedPassword),
+		Password:   userCreateModel.Password,
 		IsActive:   false,
 		CreatedAt:  time.Now(),
 		LastUpdate: time.Now(),

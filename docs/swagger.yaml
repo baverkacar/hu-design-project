@@ -9,11 +9,22 @@ definitions:
         type: string
       isActive:
         type: boolean
+      jwt:
+        type: string
       lastUpdate:
         type: string
       userId:
         type: string
       verificationCode:
+        type: string
+    type: object
+  model.ChangePasswordModel:
+    properties:
+      email:
+        type: string
+      newPassword:
+        type: string
+      oldPassword:
         type: string
     type: object
   model.UserCreateModel:
@@ -122,6 +133,8 @@ definitions:
         type: string
       isActive:
         type: boolean
+      jwt:
+        type: string
       lastUpdate:
         type: string
       password:
@@ -423,6 +436,65 @@ paths:
           schema:
             type: string
       summary: Get user by ID
+      tags:
+      - user
+  /users/changepassword:
+    patch:
+      consumes:
+      - application/json
+      description: Change the password of a user by verifying the old password and
+        setting a new one
+      parameters:
+      - description: Change Password Information
+        in: body
+        name: changePassword
+        required: true
+        schema:
+          $ref: '#/definitions/model.ChangePasswordModel'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Password successfully changed
+        "400":
+          description: Invalid input provided
+          schema:
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            type: object
+      summary: Change user password
+      tags:
+      - user
+  /users/forgetpassword:
+    post:
+      consumes:
+      - application/json
+      description: Sends a password reset email to the user if the email exists in
+        the system
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset email sent successfully
+          schema:
+            type: string
+        "400":
+          description: Email is required
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Send password reset email
       tags:
       - user
   /whitelist/{id}:
