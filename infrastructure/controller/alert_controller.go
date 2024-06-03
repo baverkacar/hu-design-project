@@ -8,6 +8,7 @@ import (
 	"hu-design-project/application/handler/alert"
 	"hu-design-project/application/model/mongo_model"
 	"hu-design-project/application/repository"
+	"hu-design-project/infrastructure/util"
 	"net/http"
 )
 
@@ -34,6 +35,7 @@ func (controller *AlertController) Register(e *echo.Echo) {
 	e.DELETE("/blacklist/:id", controller.DeleteBlacklistEntry)
 	e.GET("/whitelist", controller.GetWhitelists)
 	e.GET("/blacklist", controller.GetBlacklists)
+	e.GET("/attack-logs", controller.GetAttackLog)
 }
 
 // GetAlerts godoc
@@ -228,4 +230,17 @@ func (controller *AlertController) DeleteBlacklistEntry(c echo.Context) error {
 	}
 
 	return c.String(http.StatusOK, "Successfully deleted blacklist entry")
+}
+
+// GetAttackLog godoc
+// @Summary Retrieve all attack logs
+// @Description Get all attack logs
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Success 200 {array} map[string]interface{} "List of all attack logs"
+// @Router /attack-logs [get]
+func (controller *AlertController) GetAttackLog(c echo.Context) error {
+	data := util.CreateAndSaveAttackLogs()
+	return c.JSON(http.StatusOK, data)
 }

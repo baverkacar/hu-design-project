@@ -95,6 +95,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/attack-logs": {
+            "get": {
+                "description": "Get all attack logs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Retrieve all attack logs",
+                "responses": {
+                    "200": {
+                        "description": "List of all attack logs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Log in with email and password",

@@ -6,17 +6,17 @@ import (
 	"log"
 	"math/big"
 	"net/smtp"
-	"os"
 )
 
 const (
-	SmtpHost   = "smtp.gmail.com"
-	SmtpPort   = "587"
-	SenderMail = "baverkacar@gmail.com"
+	SmtpHost       = "smtp.gmail.com"
+	SmtpPort       = "587"
+	SenderMail     = "baverkacar@gmail.com"
+	SenderPassword = "qizd cpul nruh ydvx"
 )
 
 func SendMail(email string, code string) (string, error) {
-	token := os.Getenv("SENDER_PASSWORD")
+	token := SenderPassword
 	var err error
 	var msg []byte
 	auth := smtp.PlainAuth("", SenderMail, token, SmtpHost)

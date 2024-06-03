@@ -203,6 +203,24 @@ paths:
       summary: Add or remove an alert's IP to/from whitelist or blacklist
       tags:
       - alerts
+  /attack-logs:
+    get:
+      consumes:
+      - application/json
+      description: Get all attack logs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all attack logs
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Retrieve all attack logs
+      tags:
+      - alerts
   /auth/login:
     post:
       consumes:
