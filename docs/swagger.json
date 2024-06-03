@@ -130,6 +130,38 @@
                 }
             }
         },
+        "/blacklist": {
+            "get": {
+                "description": "Get all blacklists from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Retrieve all blacklists",
+                "responses": {
+                    "200": {
+                        "description": "List of all blacklists",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/mongo_model.List"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/blacklist/{id}": {
             "get": {
                 "description": "Get a blacklist entry by ID",
@@ -536,6 +568,38 @@
                 }
             }
         },
+        "/whitelist": {
+            "get": {
+                "description": "Get all whitelists from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Retrieve all whitelists",
+                "responses": {
+                    "200": {
+                        "description": "List of all whitelists",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/mongo_model.List"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/whitelist/{id}": {
             "get": {
                 "description": "Get a whitelist entry by ID",
@@ -783,16 +847,25 @@
         "mongo_model.Request": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "date": {
                     "type": "string"
                 },
-                "details": {
+                "destIP": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "requestType": {
+                "permission": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "sourceIP": {
+                    "type": "string"
+                },
+                "time": {
                     "type": "string"
                 }
             }

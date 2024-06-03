@@ -112,13 +112,19 @@ definitions:
     type: object
   mongo_model.Request:
     properties:
-      createdAt:
+      date:
         type: string
-      details:
+      destIP:
         type: string
       id:
         type: string
-      requestType:
+      permission:
+        type: string
+      protocol:
+        type: string
+      sourceIP:
+        type: string
+      time:
         type: string
     type: object
   mongo_model.User:
@@ -227,6 +233,27 @@ paths:
       summary: Login a user
       tags:
       - auth
+  /blacklist:
+    get:
+      consumes:
+      - application/json
+      description: Get all blacklists from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all blacklists
+          schema:
+            items:
+              $ref: '#/definitions/mongo_model.List'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all blacklists
+      tags:
+      - alerts
   /blacklist/{id}:
     delete:
       consumes:
@@ -497,6 +524,27 @@ paths:
       summary: Send password reset email
       tags:
       - user
+  /whitelist:
+    get:
+      consumes:
+      - application/json
+      description: Get all whitelists from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all whitelists
+          schema:
+            items:
+              $ref: '#/definitions/mongo_model.List'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all whitelists
+      tags:
+      - alerts
   /whitelist/{id}:
     delete:
       consumes:

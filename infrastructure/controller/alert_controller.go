@@ -7,16 +7,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"hu-design-project/application/handler/alert"
 	"hu-design-project/application/model/mongo_model"
+	"hu-design-project/application/repository"
 	"net/http"
 )
 
 type AlertController struct {
-	alertHandler *alert.Handler
+	alertHandler        *alert.Handler
+	whitelistRepository repository.WhitelistRepository
+	blacklistRepository repository.BlacklistRepository
 }
 
-func NewAlertController(alertHandler *alert.Handler) *AlertController {
+func NewAlertController(alertHandler *alert.Handler, whitelistRepository repository.WhitelistRepository, blacklistRepository repository.BlacklistRepository) *AlertController {
 	return &AlertController{
-		alertHandler: alertHandler,
+		alertHandler:        alertHandler,
+		whitelistRepository: whitelistRepository,
+		blacklistRepository: blacklistRepository,
 	}
 }
 
@@ -27,6 +32,8 @@ func (controller *AlertController) Register(e *echo.Echo) {
 	e.GET("/blacklist/:id", controller.GetBlacklistEntry)
 	e.DELETE("/whitelist/:id", controller.DeleteWhitelistEntry)
 	e.DELETE("/blacklist/:id", controller.DeleteBlacklistEntry)
+	e.GET("/whitelist", controller.GetWhitelists)
+	e.GET("/blacklist", controller.GetBlacklists)
 }
 
 // GetAlerts godoc
@@ -45,6 +52,42 @@ func (controller *AlertController) GetAlerts(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Could not retrieve alerts: "+err.Error())
 	}
 	return c.JSON(http.StatusOK, alerts)
+}
+
+// GetWhitelists godoc
+// @Summary Retrieve all whitelists
+// @Description Get all whitelists from the system
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Success 200 {array} mongo_model.List "List of all whitelists"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /whitelist [get]
+func (controller *AlertController) GetWhitelists(c echo.Context) error {
+	ctx := c.Request().Context()
+	whitelists, err := controller.whitelistRepository.GetAllWhitelists(ctx)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Could not retrieve whitelists: "+err.Error())
+	}
+	return c.JSON(http.StatusOK, whitelists)
+}
+
+// GetBlacklists godoc
+// @Summary Retrieve all blacklists
+// @Description Get all blacklists from the system
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Success 200 {array} mongo_model.List "List of all blacklists"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /blacklist [get]
+func (controller *AlertController) GetBlacklists(c echo.Context) error {
+	ctx := c.Request().Context()
+	blacklists, err := controller.blacklistRepository.GetAllBlacklists(ctx)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Could not retrieve whitelists: "+err.Error())
+	}
+	return c.JSON(http.StatusOK, blacklists)
 }
 
 // AddToList godoc

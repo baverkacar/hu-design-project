@@ -58,7 +58,7 @@ func main() {
 	// Create Controllers
 	userController := controller.NewUserController(userHandler)
 	authController := controller.NewAuthController(authHandler)
-	alertController := controller.NewAlertController(alertHandler)
+	alertController := controller.NewAlertController(alertHandler, whitelistRepo, blacklistRepo)
 	deviceController := controller.NewDeviceController(deviceHandler)
 	requestController := controller.NewRequestController(requestHandler)
 	dashboardController := controller.NewDashboardController(alertsRepo, blacklistRepo, devicesRepo, whitelistRepo, requestRepo)
