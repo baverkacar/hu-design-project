@@ -3,7 +3,6 @@ package controller
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
-	_ "github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 	"hu-design-project/application/handler/alert"
 	"hu-design-project/application/model/mongo_model"
