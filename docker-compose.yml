@@ -1,18 +1,5 @@
 version: '3.7'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mongodb
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017/hu-design-project
-    networks:
-      - app-network
-
   mongodb:
     image: mongo
     ports:
@@ -21,9 +8,4 @@ services:
       - MONGO_INITDB_DATABASE=hu-design-project
     volumes:
       - ./mongo-init:/docker-entrypoint-initdb.d
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge

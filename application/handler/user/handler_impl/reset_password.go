@@ -2,6 +2,8 @@ package handler_impl
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/labstack/gommon/log"
 	"hu-design-project/application/repository"
 	"hu-design-project/infrastructure/util"
@@ -24,9 +26,10 @@ func (handler *ResetPasswordHandler) Handle(ctx context.Context, email string) e
 	if err != nil {
 		return err
 	}
+	hashedCode := md5Hash(code)
 
 	// Şifreyi veritabanında güncelleme
-	err = handler.repository.UpdatePasswordByEmail(ctx, email, code)
+	err = handler.repository.UpdatePasswordByEmail(ctx, email, hashedCode)
 	if err != nil {
 		return err
 	}
@@ -39,4 +42,10 @@ func (handler *ResetPasswordHandler) Handle(ctx context.Context, email string) e
 
 	log.Printf("Password reset code sent to %s: %s", email, code)
 	return nil
+}
+
+func md5Hash(s string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(s))
+	return hex.EncodeToString(hasher.Sum(nil))
 }

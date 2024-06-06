@@ -21,7 +21,7 @@ func SendMail(email string, code string) (string, error) {
 	var msg []byte
 	auth := smtp.PlainAuth("", SenderMail, token, SmtpHost)
 	to := []string{email}
-	if len(code) < 0 {
+	if len(code) <= 0 {
 		code, err = CreateVerificationCode()
 		if err != nil {
 			return "", err

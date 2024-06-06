@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/labstack/gommon/log"
-	"golang.org/x/crypto/bcrypt"
 	"hu-design-project/application/model"
 	"hu-design-project/application/model/mongo_model"
 	"hu-design-project/application/repository"
@@ -27,9 +26,8 @@ func (h *LoginHandler) Handle(ctx context.Context, requestBody model.UserLoginMo
 	if err != nil {
 		return nil, err
 	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(requestBody.Password))
-	if err != nil {
+	ispPasswordsEquals := user.Password == requestBody.Password
+	if !ispPasswordsEquals {
 		return nil, errors.New("invalid password")
 	}
 
