@@ -22,7 +22,7 @@ func NewResetPasswordHandler(
 }
 func (handler *ResetPasswordHandler) Handle(ctx context.Context, email string) error {
 	// Rastgele kod oluşturma
-	code, err := util.CreateVerificationCode()
+	code, err := util.CreateVerificationCode(false)
 	if err != nil {
 		return err
 	}

@@ -22,7 +22,7 @@ func SendMail(email string, code string) (string, error) {
 	auth := smtp.PlainAuth("", SenderMail, token, SmtpHost)
 	to := []string{email}
 	if len(code) <= 0 {
-		code, err = CreateVerificationCode()
+		code, err = CreateVerificationCode(true)
 		if err != nil {
 			return "", err
 		}
@@ -44,14 +44,26 @@ func SendMail(email string, code string) (string, error) {
 	return code, nil
 }
 
-func CreateVerificationCode() (string, error) {
+func CreateVerificationCode(check bool) (string, error) {
+
 	var code string
-	for i := 0; i < 8; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(10))
-		if err != nil {
-			return "", err
+	if check == true {
+		for i := 0; i < 6; i++ {
+			num, err := rand.Int(rand.Reader, big.NewInt(10))
+			if err != nil {
+				return "", err
+			}
+			code += fmt.Sprintf("%d", num.Int64())
 		}
-		code += fmt.Sprintf("%d", num.Int64())
+	} else {
+		for i := 0; i < 8; i++ {
+			num, err := rand.Int(rand.Reader, big.NewInt(10))
+			if err != nil {
+				return "", err
+			}
+			code += fmt.Sprintf("%d", num.Int64())
+		}
 	}
+
 	return code, nil
 }
