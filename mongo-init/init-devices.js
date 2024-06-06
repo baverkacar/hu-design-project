@@ -2,7 +2,7 @@
 db.devices.insertMany([
     {
         "_id": ObjectId("5f47ac62e7179a6ca0844567"),
-        "osName": "Kali Linux",
+        "osName": "Linux",
         "ipAddress": "192.168.6.5"
     },
     {
